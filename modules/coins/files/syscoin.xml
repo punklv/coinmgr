@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<service>
+  <short>syscoin</short>
+  <description>SYS Coin Wallet</description>
+  <port protocol="tcp" port="8369"/>
+  <port protocol="tcp" port="8370"/>
+</service>
+

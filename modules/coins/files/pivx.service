@@ -1,0 +1,17 @@
+[Unit]
+Description=Pivx
+
+[Service]
+Type=forking
+ExecStart=/usr/bin/pivxd -daemon
+ExecStop=/usr/bin/pivx-cli stop
+PIDFile=/home/coin/.pivx/pivx.pid
+User=coin
+Restart=on-failure
+RestartSec=600
+TimeoutStartSec=600
+
+
+[Install]
+WantedBy=multi-user.target
+

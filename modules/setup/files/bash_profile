@@ -1,0 +1,21 @@
+# .bash_profile
+
+# Get the aliases and functions
+if [ -f ~/.bashrc ]; then
+        . ~/.bashrc
+fi
+
+#
+# User specific environment and startup programs
+#
+
+# SystemD
+alias sdr='sudo systemctl restart '
+alias sds='sudo systemctl status '
+
+# Firewall
+alias fwd='sudo firewall-cmd '
+
+# Puppet
+alias ppe='sudo puppet agent --test'
+

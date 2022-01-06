@@ -1,0 +1,143 @@
+packages:
+  'latest':
+  - tree
+  - bash-completion
+  - vim
+  - python3
+  - bash
+  - puppet-agent
+  - mlocate
+  - htop
+  - epel-release
+  - puppet7-release
+  - openssh-clients
+
+  'present':
+    - bind-utils
+    - net-tools
+    - telnet
+    - kernel-devel
+    - wget
+    - whois
+
+files::simple:
+  '/etc/hosts':
+    source: 'puppet:///modules/setup/hosts'
+
+  '/etc/resolv.conf':
+    source: 'puppet:///modules/setup/resolv.conf'
+
+  '/etc/yum.repos.d/almalinux-plus.repo':
+    source: 'puppet:///modules/setup/almalinux-plus.repo'
+
+  '/etc/motd':
+    ensure: purged
+
+  '/etc/profile.d/bash_history.sh':
+    content: "export PROMPT_COMMAND='history -a'\n"
+
+  '/etc/puppetlabs/puppet/puppet.conf':
+    source: 'puppet:///modules/setup/puppet.conf'
+    require:
+      - Package[puppet-agent]
+      - Package[puppet7-release]
+
+  '/home/boss/.ssh':
+    ensure: directory
+    mode: '0700'
+    owner: 'boss'
+    group: 'boss'
+    require:
+      - Package[openssh-clients]
+      - User[boss]
+
+  '/home/boss/.ssh/authorized_keys':
+    mode: '0600'
+    owner: 'boss'
+    group: 'boss'
+    content: 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDBcJ3vvNqYcNRcMH2B6ahGcHkgX8T4udvHXXgSVYXu/ihPYFxJkvADsXPA212AWkgC22+QCZ+bu6pRRsVTm6461rTs7ooHtwcMiHdNC6Mvf97ZD/cuM0tjA0bbwrU+mnAZkaRkUUuf5dX3u5kz5UxVgshhXhaBbtG+XGGVv8TVoll83JuMBXtt+PSBirbS/vcg00RK1hYK4mt7x6Ii1s3lvzjStMbQ6E+GwR2xm6+a2UUFLthpiuJ9Ofj7THEiNoxflW+lC0hUGflTFshuzbyIdW/vi6XjEXIAlAu70RsV0KTlqyPpzBvILAR/GD7vZ/OzS7xh7BucR6Avlr8+SHxB boss@snode01\n'
+    require:
+      - Package[openssh-clients]
+      - User[boss]
+    notify:
+      - Service[sshd]
+
+  '/etc/ssh/sshd_config':
+    mode: '0600'
+    source: 'puppet:///modules/setup/sshd_config'
+    notify:
+      - Service[sshd]
+
+  '/home/boss/.vimrc':
+    owner: 'boss'
+    group: 'boss'
+    content: |
+      :set tabstop=2
+      :set shiftwidth=2
+      :set expandtab
+      autocmd BufEnter * if &filetype == "pp" | setlocal ft=ruby | endif
+      autocmd BufNewFile,BufRead *.pp, :set filetype=ruby
+
+  '/home/boss/.bashrc':
+    source: 'puppet:///modules/setup/bashrc'
+    require:
+      - User[boss]
+
+  '/home/boss/.bash_profile':
+    source: 'puppet:///modules/setup/bash_profile'
+    require:
+      - User[boss]
+
+  '/etc/sudoers':
+    source: 'puppet:///modules/setup/sudoers'
+    mode: '0440'
+    owner: 'root'
+    group: 'root'
+
+
+services:
+  'puppet':
+    require:
+      - Package[puppet-agent]
+      - Package[puppet7-release]
+
+  'sshd':
+    require:
+      - Package[openssh-clients]
+
+  'firewalld':
+    enable: true
+    hasrestart: true
+    ensure: 'running'
+    hasstatus: true
+
+
+users:
+  'boss':
+    ensure: present
+    shell: '/bin/bash'
+    managehome: true
+    home: '/home/boss'
+    password: $6$Aamp7p4Ba4KhQIFD$uFGzSMK4X78CTXiYi.sh0HJ3ORDSHVkh/nyGZoOX79e81xXGLTU45NLy7ytbqLv77VstTmrtjrE7xVM2L7Z5q/ 
+    groups:
+      - wheel
+
+  'root':
+    ensure: present
+    shell: '/bin/bash'
+    managehome: false
+    home: '/root'
+    password: $6$uTcgeaXd.QP8lT5P$FzNLvOYV1cyHv.i0fyqx8u9wO7Cxv8C5U6/k4.UWfT2E1q7vh7Sp/WTOjvcRCXih43Ek7c2rBLItJeLZPl1eJ.
+
+
+coins:
+  'syscoin':
+    name: 'syscoin'
+    ip: '45.88.191.8'
+    tarball: 'syscoin-4.3.0-x86_64-linux-gnu.tar.gz'
+    version: '4.3.0'
+    basepath: '/opt/coins'
+    config: 'syscoin.conf'
+    service: 'syscoin'
+    unit: 'syscoin.service'
+

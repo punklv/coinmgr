@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<service>
+  <short>blocknet</short>
+  <description>BlockDX Servicenode</description>
+  <port protocol="tcp" port="41412"/>
+  <port protocol="tcp" port="41414"/>
+</service>
+

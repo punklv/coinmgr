@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<service>
+  <short>pivx</short>
+  <description>Pivx Wallet</description>
+  <port protocol="tcp" port="51472"/>
+  <port protocol="tcp" port="51473"/>
+</service>

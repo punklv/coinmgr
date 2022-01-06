@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+  <ipset type="hash:net">
+  <short>puppetmaster allow</short>
+  <entry>45.88.191.9</entry>
+  <entry>185.176.221.166</entry>
+</ipset>
+

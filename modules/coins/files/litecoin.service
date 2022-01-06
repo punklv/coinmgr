@@ -1,0 +1,16 @@
+[Unit]
+Description=Litecoin
+
+[Service]
+Type=forking
+ExecStart=/usr/bin/litecoind -daemon
+ExecStop=/usr/bin/litecoin-cli stop
+PIDFile=/home/coin/.litecoin/litecoind.pid
+User=coin
+Restart=on-failure
+RestartSec=600
+TimeoutStartSec=600
+
+[Install]
+WantedBy=multi-user.target
+

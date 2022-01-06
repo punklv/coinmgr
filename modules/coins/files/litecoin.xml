@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<service>
+  <short>litecoin</short>
+  <description>Litecoin Wallet</description>
+  <port protocol="tcp" port="9333"/>
+  <port protocol="tcp" port="9332"/>
+</service>

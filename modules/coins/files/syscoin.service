@@ -1,0 +1,17 @@
+[Unit]
+Description=SYS Coin
+
+[Service]
+Type=forking
+ExecStart=/usr/bin/syscoind -daemon
+ExecStop=/usr/bin/syscoin-cli stop
+PIDFile=/home/coin/.syscoin/syscoind.pid
+User=coin
+Restart=on-failure
+RestartSec=600
+TimeoutStartSec=600
+
+
+[Install]
+WantedBy=multi-user.target
+

@@ -1,0 +1,17 @@
+[Unit]
+Description=BlockDX
+
+[Service]
+Type=forking
+ExecStart=/usr/bin/blocknetd -daemon
+ExecStop=/usr/bin/blocknet-cli stop
+PIDFile=/home/coin/.blocknet/blocknetd.pid
+User=coin
+Restart=on-failure
+RestartSec=600
+TimeoutStartSec=600
+
+
+[Install]
+WantedBy=multi-user.target
+

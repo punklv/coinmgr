@@ -1,0 +1,155 @@
+class coins {
+
+  $coins = lookup('coins', Hash, deep)
+
+#  include coins::dirs
+  include coins::user
+#  include coins::archive
+
+  # logrotate setup
+  # FW setup
+
+  user { "coin_user":
+    name => 'coin',
+    ensure => present,
+    shell      => '/bin/bash',
+    home       => '/home/coin',
+    managehome => true,
+  }
+
+  File {
+    ensure => present,
+    owner => 'coin',
+    group => 'coin',
+    require => User['coin', ],
+  }
+
+  Exec {
+    path => '/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/opt/puppetlabs/bin',
+  }
+
+  $coins.each | Tuple $coin | {
+    $config = $coin[1]
+    $tarball_path = "${config['basepath']}/install/${config['tarball']}"
+    $install_path = "${config['basepath']}/install"
+
+    notify { "Processing: ${coin[0]}": 
+      loglevel => warning,
+    } 
+
+    file { "${config['name']}_base_directory":
+      ensure => directory,
+      path => $config['basepath'],
+    } ->
+
+    file { "${config['name']}_setup_directory":
+      ensure => directory,
+      path => $install_path,
+    } ->
+
+    file { "${config['name']}_tarball": 
+      path => $tarball_path,
+      source => "puppet:///modules/coins/${config['tarball']}",
+    } -> 
+
+    exec { "${config['name']}_unpack_tarball":
+      command => "tar -xf ${config['tarball']}",
+      cwd => $install_path,
+      creates => "${config['basepath']}/install/${config['name']}-${config['version']}",
+    } ->
+
+    exec { "${config['name']}_install":
+      command => "mv ${config['name']}-${config['version']} ${config['basepath']}/",
+      cwd => $install_path,
+      creates => "${config['basepath']}/${config['name']}-${config['version']}"
+    } ->
+
+    exec { "${config['name']}_ownership":
+      command => "chown ${config['user']}:${config['user']} -R ${config['basepath']}",
+      onlyif => "test stat --format=%U ${config['base']}/${config['name']}-${config['version']} -eq coin",
+    }
+
+    if ( $config['name'] == 'pivx' ) {
+      exec { "${config['name']}_setup":
+        command => "bash install-params.sh",
+        user => 'coin',
+        environment => [ 'HOME=/home/coin', ],
+        cwd => "${config['basepath']}/${config['name']}-${config['version']}",
+        creates => '/home/coin/.pivx-params/sapling-spend.params',
+      }
+    }
+
+    file { "${config['name']}_cli_link":
+      path => "/usr/bin/${config['name']}-cli",
+      target => "${config['basepath']}/${config['name']}-${config['version']}/bin/${config['name']}-cli",
+      ensure => link,
+    }
+
+    file { "${config['name']}_daemon_link":
+      path => "/usr/bin/${config['name']}d",
+      target => "${config['basepath']}/${config['name']}-${config['version']}/bin/${config['name']}d",
+      ensure => link,
+    }
+
+
+    $coindir = "/home/${config['user']}/.${config['name']}"
+    file { "${config['name']}_rundir":
+      path => $coindir,
+      ensure => directory,
+      require => User[ $config['user'], ],
+    }
+
+    file { "${config['name']}_config": 
+      path => "${coindir}/${config['config']}",
+      source => "puppet:///modules/coins/${config['config']}",
+    }
+
+    if ( $config['name'] == 'blocknet' ) {
+      file { "servicenode_config":
+        path => "${coindir}/${config['servicenode']}",
+        source => "puppet:///modules/coins/${config['servicenode']}",
+      }       
+
+      file { "xrouter_config":
+        path => "${coindir}/${config['xrouter']}",
+        source => "puppet:///modules/coins/${config['xrouter']}",
+      }
+
+      file { "xbridge_config":
+        path => "${coindir}/${config['xbridge']}",
+        source => "puppet:///modules/coins/${config['xbridge']}",
+      }
+
+    }
+
+    file { "${config['name']}_firewall_service":
+      path => "/etc/firewalld/services/${config['name']}.xml",
+      owner => 'root',
+      group => 'root',
+      source => "puppet:///modules/coins/${config['name']}.xml",
+      notify => Service['firewalld'],
+    } ->
+
+    exec { "${config['name']}_firewall_open":
+      command => "firewall-cmd --zone public --add-service ${config['name']} --permanent",
+      unless => "firewall-cmd --list-all | grep ${config['name']}",
+      notify => Service['firewalld'],
+    }
+
+    file { "${config['service']}":
+      path => "/etc/systemd/system/${config['unit']}",
+      source => "puppet:///modules/coins/${config['unit']}",
+      notify => Service[ $config['service'], ],
+    }
+
+    service { "${config['service']}":
+      ensure => running,
+      enable => true,
+      hasrestart => true,
+      hasstatus => true,
+      require => File[ $config['service'] ],
+    }
+  }
+}
+
+
