@@ -1,4 +1,8 @@
 class setup {
+
+# TODO
+# add lsof
+
   #
   # Packages
   # 
@@ -59,7 +63,7 @@ class setup {
     notify => Service['firewalld'],
   } ->
 
-  exec {'FW allow snode02 to puppet':
+  exec {'FW allow snodes to puppet':
     path => $path,
     command => "firewall-cmd --zone public --add-rich-rule='rule family=ipv4 source not ipset=puppetmaster.ipset service name=puppetmaster drop' --permanent",
     unless => 'firewall-cmd --list-all --zone public | grep puppetmaster.ipset',

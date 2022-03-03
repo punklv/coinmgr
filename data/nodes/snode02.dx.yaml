@@ -20,6 +20,7 @@ packages:
     - wget
     - whois
 
+
 files::simple:
   '/etc/hosts':
     source: 'puppet:///modules/setup/hosts'
@@ -133,11 +134,24 @@ users:
 coins:
   'syscoin':
     name: 'syscoin'
-    ip: '45.88.191.8'
+    ip: '45.88.191.9'
     tarball: 'syscoin-4.3.0-x86_64-linux-gnu.tar.gz'
     version: '4.3.0'
     basepath: '/opt/coins'
     config: 'syscoin.conf'
     service: 'syscoin'
     unit: 'syscoin.service'
+
+    #  'blocknet':
+    #    name: 'blocknet'
+    #    ip: '45.88.191.9'
+    #    tarball: 'blocknet-4.3.3-x86_64-linux-gnu.tar.gz'
+    #    version: '4.3.3'
+    #    basepath: '/opt/coins'
+    #    config: 'blocknet.conf'
+    #    servicenode: 'servicenode.conf'
+    #    xrouter: 'xrouter.conf'
+    #    xbridge: 'xbridge.conf'
+    #    service: 'blocknet'
+    #    unit: 'blocknet.service'
 
