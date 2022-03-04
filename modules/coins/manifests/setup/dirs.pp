@@ -11,10 +11,7 @@ class coins::setup::dirs inherits coins::setup {
 	
 	$settings = lookup('coins::setup', Hash, deep, {})
 	$basepath = $settings['basepath']
-	$unpack_dir = $settings['unpack']
-	$tarballs_dir = $settings['tarballs']
-	$register_dir = $settings['register']
-
+	$packages = $settings['packages']
 	
 	File {
 		ensure => present,
@@ -23,15 +20,10 @@ class coins::setup::dirs inherits coins::setup {
 		backup => false,
 	}
 	
-	file { ['/opt/coins/', '/opt/coins/unpack', '/opt/coins/tarballs', '/opt/coins/register']: 
+	file { [ $basepath, $packages ]: 
 		ensure => directory,
 		mode => '0755',
 	}
-
-
-
-	# $dirs = lookup('coins::setup::dirs', Hash, deep, {})
-
 }
 
 #  $tarball_path = "${config['basepath']}/install/${config['tarball']}"

@@ -5,6 +5,7 @@ classes:
     - coins::setup::user
     - coins::block::install
 
+
 packages:
   'latest':
     - tree
@@ -171,11 +172,11 @@ coins:
 coins::block:
     name: 'blocknet'
     filename: 'blocknet-4.3.3-x86_64-linux-gnu.tar.gz'
-    url: 'https://github.com/blocknetdx/blocknet/releases/download/v4.3.3/blocknet-4.3.3-x86_64-linux-gnu-debug.tar.gz'
+    url: 'https://github.com/blocknetdx/blocknet/releases/download/v4.3.3/blocknet-4.3.3-x86_64-linux-gnu.tar.gz'
     version: '4.3.3'
+    startup: ''
     
 coins::setup:
     basepath: '/opt/coins'
-    unpack: '/opt/coins/unpack'
-    tarballs: '/opt/coins/tarballs'
-    register: '/opt/coins/register'
+    packages: '/opt/coins/packages'
+    user: 'coins'

@@ -30,4 +30,3 @@ node "gethnode01.dx" {
   include setup
   include base
 }
-

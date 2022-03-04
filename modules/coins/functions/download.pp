@@ -1,27 +1,26 @@
-function coins::download ( String $url, String $name, String $filename, String $version ) {
-
-	require coins::setup::dirs
+function coins::download ( 
+		String $url, 
+		String $name, 
+		String $filename, 
+		String $user,
+		String $basepath,
+		String $packages ) {
 	
 	$func_name = "coins::download()"
-	$basepath = $coins::setup::dirs::basepath
 
 	File {
 		ensure => present,
-		owner => 'coins',
-		group => 'wheel',
+		owner => $user,
 		backup => false,
 	}
 	
-	file { "${basepath}/${name}":
+	file { [ "${packages}/${name}", "${basepath}/${name}" ]:
 		ensure => directory,
 		mode => '0755',
-	}
+	} ->
 	
-	# TODO
-	# change the dir structure to something with more sense
-	# base/ /tarballs /blocknet /pivx
-	
-	file { "${basepath}/${name}/${filename}":
+	file { "Downloading package for: ${name}":
+		path => "${packages}/${name}/${filename}",
 		source => $url,
 	}
 }
