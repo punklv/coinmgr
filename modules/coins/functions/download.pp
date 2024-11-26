@@ -8,19 +8,14 @@ function coins::download (
 	
 	$func_name = "coins::download()"
 
-	File {
-		ensure => present,
-		owner => $user,
-		backup => false,
-	}
-	
 	file { [ "${packages}/${name}", "${basepath}/${name}" ]:
 		ensure => directory,
-		mode => '0755',
+		* => $coins::defaults_dir
 	} ->
 	
 	file { "Downloading package for: ${name}":
 		path => "${packages}/${name}/${filename}",
 		source => $url,
+		* => $coins::defaults_file
 	}
 }

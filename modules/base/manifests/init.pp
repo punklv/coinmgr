@@ -1,6 +1,6 @@
 class base {
 
-	notify {"Loaded classes: \"base\"":
-		loglevel => warning,
-	}
+	# notify {"Loaded classes: \"base\"":
+		# loglevel => warning,
+	# }
 }

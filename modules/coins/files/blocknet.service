@@ -10,7 +10,7 @@ User=coin
 Restart=on-failure
 RestartSec=600
 TimeoutStartSec=600
-
+StandardOutput=syslog
 
 [Install]
 WantedBy=multi-user.target

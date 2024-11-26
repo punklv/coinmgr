@@ -3,7 +3,6 @@
 classes:
     - coins::setup::dirs
     - coins::setup::user
-    - coins::block::install
 
 
 packages:
@@ -168,14 +167,6 @@ coins:
     service: 'blocknet'
     unit: 'blocknet.service'
 
-
-coins::block:
-    name: 'blocknet'
-    filename: 'blocknet-4.3.3-x86_64-linux-gnu.tar.gz'
-    url: 'https://github.com/blocknetdx/blocknet/releases/download/v4.3.3/blocknet-4.3.3-x86_64-linux-gnu.tar.gz'
-    version: '4.3.3'
-    startup: ''
-    
 coins::setup:
     basepath: '/opt/coins'
     packages: '/opt/coins/packages'

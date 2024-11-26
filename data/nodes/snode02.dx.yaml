@@ -1,16 +1,25 @@
+---
+
+classes:
+    - coins::setup::dirs
+    - coins::setup::user
+    - coins::block::install
+    - coins::block::configure
+
+
 packages:
   'latest':
-  - tree
-  - bash-completion
-  - vim
-  - python3
-  - bash
-  - puppet-agent
-  - mlocate
-  - htop
-  - epel-release
-  - puppet7-release
-  - openssh-clients
+    - tree
+    - bash-completion
+    - vim
+    - python3
+    - bash
+    - puppet-agent
+    - mlocate
+    - htop
+    - epel-release
+    - puppet7-release
+    - openssh-clients
 
   'present':
     - bind-utils
@@ -96,6 +105,17 @@ files::simple:
     group: 'root'
 
 
+  '/etc/firewalld/services/puppetmaster.xml':
+    source: 'puppet:///modules/setup/puppetmaster.xml'
+    notify:
+      - Service[firewalld]
+
+  '/etc/firewalld/ipsets/puppetmaster.ipset.xml':
+    source: 'puppet:///modules/setup/puppetmaster.ipset.xml'
+    notify:
+      - Service[firewalld]
+
+
 services:
   'puppet':
     require:
@@ -107,10 +127,9 @@ services:
       - Package[openssh-clients]
 
   'firewalld':
-    enable: true
-    hasrestart: true
-    ensure: 'running'
-    hasstatus: true
+    require:
+      - File[/etc/firewalld/services/puppetmaster.xml]
+      - File[/etc/firewalld/ipsets/puppetmaster.ipset.xml]
 
 
 users:
@@ -119,7 +138,7 @@ users:
     shell: '/bin/bash'
     managehome: true
     home: '/home/boss'
-    password: $6$Aamp7p4Ba4KhQIFD$uFGzSMK4X78CTXiYi.sh0HJ3ORDSHVkh/nyGZoOX79e81xXGLTU45NLy7ytbqLv77VstTmrtjrE7xVM2L7Z5q/ 
+    password: $6$Aamp7p4Ba4KhQIFD$uFGzSMK4X78CTXiYi.sh0HJ3ORDSHVkh/nyGZoOX79e81xXGLTU45NLy7ytbqLv77VstTmrtjrE7xVM2L7Z5q/
     groups:
       - wheel
 
@@ -131,27 +150,17 @@ users:
     password: $6$uTcgeaXd.QP8lT5P$FzNLvOYV1cyHv.i0fyqx8u9wO7Cxv8C5U6/k4.UWfT2E1q7vh7Sp/WTOjvcRCXih43Ek7c2rBLItJeLZPl1eJ.
 
 
-coins:
-  'syscoin':
-    name: 'syscoin'
-    ip: '45.88.191.9'
-    tarball: 'syscoin-4.3.0-x86_64-linux-gnu.tar.gz'
-    version: '4.3.0'
+coins::block:
+    name: 'blocknet'
+    filename: 'blocknet-4.3.3-x86_64-linux-gnu.tar.gz'
+    url: 'https://github.com/blocknetdx/blocknet/releases/download/v4.3.3/blocknet-4.3.3-x86_64-linux-gnu.tar.gz'
+    version: '4.3.3'
+    configs: 
+        - servicenode.conf
+        - xrouter.conf
+        - xbridge.conf
+
+coins::setup:
     basepath: '/opt/coins'
-    config: 'syscoin.conf'
-    service: 'syscoin'
-    unit: 'syscoin.service'
-
-    #  'blocknet':
-    #    name: 'blocknet'
-    #    ip: '45.88.191.9'
-    #    tarball: 'blocknet-4.3.3-x86_64-linux-gnu.tar.gz'
-    #    version: '4.3.3'
-    #    basepath: '/opt/coins'
-    #    config: 'blocknet.conf'
-    #    servicenode: 'servicenode.conf'
-    #    xrouter: 'xrouter.conf'
-    #    xbridge: 'xbridge.conf'
-    #    service: 'blocknet'
-    #    unit: 'blocknet.service'
-
+    packages: '/opt/coins/packages'
+    user: 'coins'

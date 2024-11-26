@@ -21,8 +21,6 @@ packages:
     - kernel-devel
     - wget
     - whois
-  'require': 
-    - Package[epel-release] 
 
 
 files::simple:
@@ -56,6 +54,15 @@ files::simple:
       - Package[openssh-clients]
       - User[boss]
 
+  '/home/lex/.ssh':
+    ensure: directory
+    mode: '0700'
+    owner: 'lex'
+    group: 'lex'
+    require:
+      - Package[openssh-clients]
+      - User[lex]
+
   '/home/boss/.ssh/authorized_keys':
     mode: '0600'
     owner: 'boss'
@@ -67,15 +74,16 @@ files::simple:
     notify:
       - Service[sshd]
 
-#  '/home/lex/.ssh/authorized_keys':
-#    mode: '0600'
-#    owner: 'boss'
-#    group: 'boss'
-#    content: 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDkHDtGgmROkVZ/tJLZYFoIouI2bHRv+gML4ATu/Dv/nti+zM5Lx86S4DWn+d7gFHwb4LLnrhuf6lWzDaTJbbnF5QMk9M8hfB5J+65pNBmsr8AoBkSjmHNLEOuAFxOZIgktGl+5mteP7Nkax7uMivx+xLuJswzPz/H1UigjMMk2VZLDhgzJinjI/L0kFvfPVdxDH++0M6CB3VlniPRjP/8RK/2MqwsSLkRYcoXmxsAjGyd0cFr4prGPVH54VGRdq3Rw7gc1bQ+QVpp/MZiN5io0GHWGuMx2/1xPQ0cOAFUZTcR0yAvvl1+Mt6WoPC0qwPSPKqxBNJ4MuXsgZJRLN/4t lex@gethnode01\n'
-#    require:
-#      - Package[openssh-clients]
-#    notify:
-#      - Service[sshd]
+  '/home/lex/.ssh/authorized_keys':
+    mode: '0600'
+    owner: 'lex'
+    group: 'lex'
+    content: 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDkHDtGgmROkVZ/tJLZYFoIouI2bHRv+gML4ATu/Dv/nti+zM5Lx86S4DWn+d7gFHwb4LLnrhuf6lWzDaTJbbnF5QMk9M8hfB5J+65pNBmsr8AoBkSjmHNLEOuAFxOZIgktGl+5mteP7Nkax7uMivx+xLuJswzPz/H1UigjMMk2VZLDhgzJinjI/L0kFvfPVdxDH++0M6CB3VlniPRjP/8RK/2MqwsSLkRYcoXmxsAjGyd0cFr4prGPVH54VGRdq3Rw7gc1bQ+QVpp/MZiN5io0GHWGuMx2/1xPQ0cOAFUZTcR0yAvvl1+Mt6WoPC0qwPSPKqxBNJ4MuXsgZJRLN/4t lex@gethnode01\n'
+    require:
+      - Package[openssh-clients]
+      - User[lex]
+    notify:
+      - Service[sshd]
 
 
   '/etc/ssh/sshd_config':
@@ -168,4 +176,8 @@ users:
     managehome: true
     password: $6$XMaFfR9HSxja1YVB$UF0p9dWoGhz7jSwE5eBZWuscAKVroxKvtoAZOnfoHxSkzZ7lWVgKXEoWC3JWv2NlxcXbylWIvtMJ7018.Dqf30
     home: '/home/lex'
+    groups:
+      - wheel
+
+
  

@@ -17,8 +17,12 @@ node "snode03.dx" {
 
 
 node "snode02.dx" {
+
+  $includes = lookup('classes', Array, deep, {})
+	
   include setup
   include base
+	include $includes
 }
 
 node "snode01.dx" {

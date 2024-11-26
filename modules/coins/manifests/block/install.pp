@@ -12,20 +12,21 @@ class coins::block::install inherits coins::block {
 	$url = $data['url']
 	$coin_name = $data['name']
 	$filename = $data['filename']
-	$version = $data['filename']
+	$version = $data['version']
 	$coin_startup = $data['startup']
-	$coin_bin = "${basepath}/${coin_name}/${coin_name}-${version}/bin/${coin_name}-cli"
+	$coin_cli = "${basepath}/${coin_name}/${coin_name}-${version}/bin/${coin_name}-cli"
 	$coin_daemon = "${basepath}/${coin_name}/${coin_name}-${version}/bin/${coin_name}d"
 	
 	coins::download($url, $coin_name, $filename, $user, $basepath, $packages)
 	coins::unpack($coin_name, $version, $filename, $basepath, $packages)
-
-	#coins::add_service()
+	
+	# make ~/.blocnet
+	coins::make_home($user, $coin_name)
 	
 	# generate systemd conf
-	# make ~/.blocnet
-	# put config
-	# make links
-	# startup
+	coins::add_service($coin_name, $coin_cli, $coin_daemon, $user)
 
+	# make links
+	coins::make_links($coin_cli, $coin_daemon, $coin_name)
+	
 }
